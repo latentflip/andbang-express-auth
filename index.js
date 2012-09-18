@@ -66,7 +66,6 @@ function AndBangMiddleware() {
         this.app.get('/auth/andbang/callback', function (req, response) {
             var code = querystring.parse(req.url.split('?')[1]).code,
                 token;
-            console.log('code:', code, self.accountsUrl + '/oauth/access_token');
             request.post({
                 url: self.accountsUrl + '/oauth/access_token', 
                 form: {
@@ -79,7 +78,6 @@ function AndBangMiddleware() {
                 if (res && res.statusCode === 200) {
                     token = JSON.parse(body).access_token;
                 }
-                console.log('response from acess token request', body);
                 request.get({
                     url: self.apiUrl + '/me',
                     headers: {
@@ -93,7 +91,6 @@ function AndBangMiddleware() {
                         req.session.accessToken = token;
                         delete req.session.nextUrl;
                         req.session.save(function () {
-                            console.log('saved session and redirecting to:', nextUrl);
                             response.redirect(nextUrl);
                         });
                     } else {
@@ -117,7 +114,6 @@ function AndBangMiddleware() {
         if (req.session.user) {
             next();
         } else {
-            console.log('redirecting');
             req.session.nextUrl = req.url;
             res.redirect('/login');
         }
