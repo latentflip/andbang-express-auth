@@ -27,7 +27,7 @@ function AndBangMiddleware() {
             "",
             "",
             "// a route that requires being logged in with andbang",
-            "app.get('/my-secured-route', auth.secure, function (req, res) {",
+            "app.get('/my-secured-route', auth.secure(), function (req, res) {",
             "    // req.user is everything we know about the andbang user",
             "    // req.token is now the auth token",
             "    res.send(req.user)",
@@ -112,13 +112,16 @@ function AndBangMiddleware() {
         };
     };
 
-    this.secured = function (req, res, next) {
-        if (req.session.user) {
-            next();
-        } else {
-            req.session.nextUrl = req.url;
-            res.redirect(this.loginPageUrl);
-        }
+    this.secure = function () {
+        var self = this;
+        return function (req, res, next) {
+            if (req.session.user) {
+                next();
+            } else {
+                req.session.nextUrl = req.url;
+                res.redirect(self.loginPageUrl);
+            }
+        }   
     };
 }
 
