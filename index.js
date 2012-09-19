@@ -21,7 +21,8 @@ function AndBangMiddleware() {
             "app.use(auth.middleware({",
             "    app: app",
             "    clientId: 'YOUR CLIENT ID',",
-            "    clientSecret: 'YOUR CLIENT SECRET'",
+            "    clientSecret: 'YOUR CLIENT SECRET',",
+            "    defaultRedirect: '/app'",
             "});",
             "",
             "",
@@ -46,13 +47,14 @@ function AndBangMiddleware() {
         
         // store our configs as properties
         _.extend(this, {
-            loggedOutRedirect: '/'
+            loggedOutRedirect: '/',
+            loginPageUrl: '/login'
         }, config);
 
         // set our account and API urls
         this.accountsUrl = config.local ? 'http://localhost:3001' : 'https://accounts.andbang.com';
         this.apiUrl = config.local ? 'http://localhost:3000' : 'https://api.andbang.com';
-        
+
         // the login route
         this.app.get('/auth', function (req, res) {
             var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
