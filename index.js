@@ -117,7 +117,7 @@ function AndBangMiddleware() {
             next();
         } else {
             req.session.nextUrl = req.url;
-            res.redirect('/login');
+            res.redirect(this.loginPageUrl);
         }
     };
 }
