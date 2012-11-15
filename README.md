@@ -2,13 +2,13 @@
 
 World's simplest oAuth. 
 
-You just have to go register your application at https://accounts.andbang.com. You'll get a client ID and client secret. Just drop those into the code below and then just add a link or button that points to `/auth` somewhere on your page and you're good to go.
+You just have to go register your application at <<>>. You'll get a client ID and client secret. Just drop those into the code below and then just add a link or button that points to `/auth` somewhere on your page and you're good to go.
 
 The code below should work once you've dropped in your client id and secret:
 
 ```js
 var express = require('express'),
-    andbangAuth = require('./andbang-express-auth'),
+    andbangAuth = require('andbang-express-auth'),
     app = express();
 
 // config our middleware

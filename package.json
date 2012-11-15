@@ -2,7 +2,6 @@
     "name": "andbang-express-auth",
     "description": "Dead simple And Bang auth middleware.",
     "version": "0.0.1",
-    "private": true,
     "dependencies": {
         "express": "3.x",
         "colors": "",
