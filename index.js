@@ -57,12 +57,16 @@ function AndBangMiddleware() {
 
         // the login route
         this.app.get('/auth', function (req, res) {
-            var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
-                    response_type: 'code',
-                    client_id: self.clientId,
-                    type: 'web_server'
-                });
-            res.redirect(url);
+            if (req.session.accessToken) {
+                res.redirect(self.defaultRedirect);
+            } else {
+                var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
+                        response_type: 'code',
+                        client_id: self.clientId,
+                        type: 'web_server'
+                    });
+                res.redirect(url);
+            }
         });
 
         this.app.get('/auth/andbang/callback', function (req, response) {
@@ -104,7 +108,8 @@ function AndBangMiddleware() {
 
         this.app.get('/logout', function (req, res) {
             req.session.destroy();
-            res.redirect(this.loggedOutRedirect);
+            res.clearCookie('accessToken');
+            res.redirect(self.loggedOutRedirect);
         });
 
         return function (req, res, next) {
