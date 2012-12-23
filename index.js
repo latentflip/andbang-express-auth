@@ -1,10 +1,13 @@
 var _ = require('underscore'),
     colors = require('colors'),
+    crypto = require('crypto'),
     request = require('request'),
     querystring = require('querystring');
 
 
 function AndBangMiddleware() {
+    var self = this;
+
     this.showHelp = function (message) {
         var output = [
             "\n",
@@ -48,62 +51,78 @@ function AndBangMiddleware() {
         // store our configs as properties
         _.extend(this, {
             loggedOutRedirect: '/',
-            loginPageUrl: '/login'
+            loginPageUrl: '/login',
+            loginFailedRedirect: '/login-failed'
         }, config);
 
         // set our account and API urls
         this.accountsUrl = config.local ? 'http://localhost:3001' : 'https://accounts.andbang.com';
         this.apiUrl = config.local ? 'http://localhost:3000' : 'https://api.andbang.com';
+        this.secureCookies = !config.local;
 
-        // the login route
+        // The login route. If we already have a token in the session we'll
+        // just continue through.
         this.app.get('/auth', function (req, res) {
-            if (req.session.accessToken) {
-                res.redirect(self.defaultRedirect);
-            } else {
-                var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
-                        response_type: 'code',
-                        client_id: self.clientId,
-                        type: 'web_server'
-                    });
-                res.redirect(url);
+            if (req.cookies.accessToken || req.session.token) {
+                return res.redirect(self.defaultRedirect);
             }
+
+            delete req.session.token;
+            res.clearCookie('accessToken');
+            req.session.oauthState = crypto.createHash('sha1').update(crypto.randomBytes(4098)).digest('hex')
+            var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
+                    response_type: 'code',
+                    client_id: self.clientId,
+                    state: req.session.oauthState
+                });
+            res.redirect(url);
         });
 
         this.app.get('/auth/andbang/callback', function (req, response) {
-            var code = querystring.parse(req.url.split('?')[1]).code,
-                token;
+            var result = querystring.parse(req.url.split('?')[1]);
+
+            if (result.error) {
+                response.redirect('/auth/andbang/failed');
+            }
+
+            if (result.state != req.session.oauthState) {
+                response.redirect('/auth/andbang/failed');
+            }
+
             request.post({
                 url: self.accountsUrl + '/oauth/access_token', 
                 form: {
-                    code: code,
+                    code: result.code,
                     grant_type: 'authorization_code',
                     client_id: self.clientId,
                     client_secret: self.clientSecret
                 }
             }, function (err, res, body) {
                 if (res && res.statusCode === 200) {
-                    token = JSON.parse(body).access_token;
-                }
-                request.get({
-                    url: self.apiUrl + '/me',
-                    headers: {
-                        authorization: 'Bearer ' + token
-                    },
-                    json: true
-                }, function (err, res, body) {
+                    token = JSON.parse(body);
+                    req.session.token = token;
+                    req.session.token.grant_date = Date.now();
                     var nextUrl = req.session.nextUrl || self.defaultRedirect || '/';
-                    if (res && res.statusCode === 200) {
-                        req.session.user = body;
-                        req.session.accessToken = token;
-                        delete req.session.nextUrl;
-                        req.session.save(function () {
+                    delete req.session.nextUrl;
+                    req.session.save(function () {
+                        response.cookie('accessToken', token.access_token, {
+                            maxAge: 86400000,
+                            secure: self.secureCookies
+                        });
+                        return self.userRequired(req, response, function () {
                             response.redirect(nextUrl);
                         });
-                    } else {
-                        response.redirect('/login-failed'); 
-                    }
-                });
+                    });
+                } else {
+                    response.redirect('/auth/andbang/failed');
+                }
             });
+        });
+
+        this.app.get('/auth/andbang/failed', function (req, res) {
+            delete req.session.token;
+            res.clearCookie('accessToken');
+            res.redirect(self.loginFailedRedirect);
         });
 
         this.app.get('/logout', function (req, res) {
@@ -117,16 +136,80 @@ function AndBangMiddleware() {
         };
     };
 
+    this.userRequired = function (req, res, next) {
+        // Ensure that a user object is available after validating
+        // or retrieving a token.
+        if (req.session.user) {
+            next();
+        } else {
+            request.get({
+                url: self.apiUrl + '/me',
+                headers: {
+                    authorization: 'Bearer ' + req.session.token.access_token
+                },
+                json: true
+            }, function (err, res2, body) {
+                if (res2 && res2.statusCode === 200) {
+                    req.session.user = body;
+                    next();
+                } else {
+                    res.redirect('/auth/andbang/failed');
+                }
+            });
+        }
+    }
+
     this.secure = function () {
-        var self = this;
+        // Check that an access token is available, either in the current
+        // session or cached in a cookie. We'll validate cached tokens to
+        // ensure that they were issued for our app and aren't expired.
         return function (req, res, next) {
-            if (req.session.user) {
-                next();
-            } else {
-                req.session.nextUrl = req.url;
-                res.redirect(self.loginPageUrl);
+            var cookieToken = req.cookies.accessToken,
+                sessionToken;
+           
+            if (req.session.token) {
+                sessionToken = req.session.token.access_token;
             }
-        }   
+
+            if (!cookieToken && !sessionToken) {
+                req.session.nextUrl = req.url;
+                return res.redirect('/auth');
+            } else if (!cookieToken && sessionToken) {
+                res.cookie('accessToken', sessionToken, {
+                    maxAge: 86400000,
+                    secure: self.secureCookies
+                });
+                return self.userRequired(req, res, next);
+            } else if (cookieToken && !sessionToken) {
+                request.post({
+                    url: self.accountsUrl + '/oauth/validate',
+                    form: {
+                        access_token: cookieToken,
+                        client_id: self.clientId,
+                        client_secret: self.clientSecret
+                    },
+                }, function (err, res2, body) {
+                    if (res2 && res2.statusCode === 200) {
+                        var token = JSON.parse(body);
+                        if (token.access_token === cookieToken) {
+                            req.session.token = token;
+                            req.session.token.grant_date = Date.now();
+                            return self.userRequired(req, res, next);
+                        }
+                    }
+                    res.clearCookie('accessToken');
+                    res.redirect('/auth');
+                });
+            } else if (cookieToken && sessionToken && cookieToken !== sessionToken) {
+                res.cookie('accessToken', sessionToken, {
+                    maxAge: 86400000,
+                    secure: self.secureCookies
+                });
+                return self.userRequired(req, res, next);
+            } else {
+                return self.userRequired(req, res, next);
+            }
+        }
     };
 }
 
