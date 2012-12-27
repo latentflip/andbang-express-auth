@@ -1,10 +1,20 @@
 # And Bang auth middleware for Express.js
 
-World's simplest oAuth. 
+World's simplest OAuth. 
 
-You just have to go register your application at <<>>. You'll get a client ID and client secret. Just drop those into the code below and then just add a link or button that points to `/auth` somewhere on your page and you're good to go.
+1. Sign up for an And Bang account at https://next.andbang.com
+2. Register your application at https://accounts.andbang.com/developer
 
-The code below should work once you've dropped in your client id and secret:
+   When setting your redirect URL, make sure your path is `/auth/andbang/callback`.
+   For example: `localhost:9000/auth/andbang/callback`
+
+3. Copy your app's client ID and secret, and insert them into the middleware's
+   constructor, like in the example below.
+4. Add a link or button that points to `/auth` somewhere on your page.
+5. ...
+6. Profit!
+   
+The code below should work once you've dropped in your client ID and secret:
 
 ```js
 var express = require('express'),
@@ -26,9 +36,9 @@ app.get('/', function (req, res) {
     res.send('<a href="/auth">login</a>');
 });
 
-// if for routes where you want to require login add the middleware
-// like this:
-app.get('/secured', andbangAuth.secured, function (req, res) {
+// For routes where you want to require login,
+// add the middleware like this:
+app.get('/secured', andbangAuth.secure(), function (req, res) {
     res.send(req.session.user);
 });
 
