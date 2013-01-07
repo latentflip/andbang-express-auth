@@ -50,9 +50,7 @@ function AndBangMiddleware() {
         
         // store our configs as properties
         _.extend(this, {
-            loggedOutRedirect: '/',
-            loginPageUrl: '/login',
-            loginFailedRedirect: '/login-failed'
+            loggedOutRedirect: '/'
         }, config);
 
         // set our account and API urls
@@ -69,12 +67,12 @@ function AndBangMiddleware() {
 
             delete req.session.token;
             res.clearCookie('accessToken');
-            req.session.oauthState = crypto.createHash('sha1').update(crypto.randomBytes(4098)).digest('hex')
+            req.session.oauthState = crypto.createHash('sha1').update(crypto.randomBytes(4098)).digest('hex');
             var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
-                    response_type: 'code',
-                    client_id: self.clientId,
-                    state: req.session.oauthState
-                });
+                response_type: 'code',
+                client_id: self.clientId,
+                state: req.session.oauthState
+            });
             res.redirect(url);
         });
 
@@ -122,7 +120,7 @@ function AndBangMiddleware() {
         this.app.get('/auth/andbang/failed', function (req, res) {
             delete req.session.token;
             res.clearCookie('accessToken');
-            res.redirect(self.loginFailedRedirect);
+            res.redirect('/auth');
         });
 
         this.app.get('/logout', function (req, res) {
