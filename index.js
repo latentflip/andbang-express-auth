@@ -58,16 +58,14 @@ function AndBangMiddleware() {
         // set our account and API urls
         this.accountsUrl = config.local ? 'http://localhost:3001' : 'https://accounts.andbang.com';
         this.apiUrl = config.local ? 'http://localhost:3000' : 'https://api.andbang.com';
-        this.secureCookies = !config.local;
 
         // The login route. If we already have a token in the session we'll
         // just continue through.
         this.app.get('/auth', function (req, res) {
-            if (req.cookies.accessToken || req.session.token) {
+            if (req.cookies.accessToken) {
                 return res.redirect(self.defaultRedirect);
             }
 
-            delete req.session.token;
             res.clearCookie('accessToken');
             req.session.oauthState = crypto.createHash('sha1').update(crypto.randomBytes(4098)).digest('hex')
             var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
@@ -100,14 +98,13 @@ function AndBangMiddleware() {
             }, function (err, res, body) {
                 if (res && res.statusCode === 200) {
                     token = JSON.parse(body);
-                    req.session.token = token;
-                    req.session.token.grant_date = Date.now();
+                    req.token = token;
                     var nextUrl = req.session.nextUrl || self.defaultRedirect || '/';
                     delete req.session.nextUrl;
                     req.session.save(function () {
                         response.cookie('accessToken', token.access_token, {
-                            maxAge: 86400000,
-                            secure: self.secureCookies
+                            maxAge: parseInt(token.expires_in, 10) * 1000,
+                            secure: req.secure || req.host != 'localhost'
                         });
                         return self.userRequired(req, response, function () {
                             response.redirect(nextUrl);
@@ -120,7 +117,6 @@ function AndBangMiddleware() {
         });
 
         this.app.get('/auth/andbang/failed', function (req, res) {
-            delete req.session.token;
             res.clearCookie('accessToken');
             res.redirect(self.loginFailedRedirect);
         });
@@ -145,7 +141,7 @@ function AndBangMiddleware() {
             request.get({
                 url: self.apiUrl + '/me',
                 headers: {
-                    authorization: 'Bearer ' + req.session.token.access_token
+                    authorization: 'Bearer ' + req.token.access_token
                 },
                 json: true
             }, function (err, res2, body) {
@@ -164,23 +160,12 @@ function AndBangMiddleware() {
         // session or cached in a cookie. We'll validate cached tokens to
         // ensure that they were issued for our app and aren't expired.
         return function (req, res, next) {
-            var cookieToken = req.cookies.accessToken,
-                sessionToken;
+            var cookieToken = req.cookies.accessToken;
            
-            if (req.session.token) {
-                sessionToken = req.session.token.access_token;
-            }
-
-            if (!cookieToken && !sessionToken) {
+            if (!cookieToken) {
                 req.session.nextUrl = req.url;
                 return res.redirect('/auth');
-            } else if (!cookieToken && sessionToken) {
-                res.cookie('accessToken', sessionToken, {
-                    maxAge: 86400000,
-                    secure: self.secureCookies
-                });
-                return self.userRequired(req, res, next);
-            } else if (cookieToken && !sessionToken) {
+            } else {
                 request.post({
                     url: self.accountsUrl + '/oauth/validate',
                     form: {
@@ -190,24 +175,17 @@ function AndBangMiddleware() {
                     },
                 }, function (err, res2, body) {
                     if (res2 && res2.statusCode === 200) {
-                        var token = JSON.parse(body);
-                        if (token.access_token === cookieToken) {
-                            req.session.token = token;
-                            req.session.token.grant_date = Date.now();
+                        req.token = JSON.parse(body);
+                        if (req.token.access_token === cookieToken) {
+                            res.cookie('accessToken', req.token.access_token, {
+                                maxAge: parseInt(req.token.expires_in, 10) * 1000,
+                                secure: req.secure || req.host != 'localhost'
+                            });
                             return self.userRequired(req, res, next);
                         }
                     }
-                    res.clearCookie('accessToken');
-                    res.redirect('/auth');
+                    res.redirect('/auth/andbang/failed');
                 });
-            } else if (cookieToken && sessionToken && cookieToken !== sessionToken) {
-                res.cookie('accessToken', sessionToken, {
-                    maxAge: 86400000,
-                    secure: self.secureCookies
-                });
-                return self.userRequired(req, res, next);
-            } else {
-                return self.userRequired(req, res, next);
             }
         }
     };
