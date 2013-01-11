@@ -66,23 +66,25 @@ function AndBangMiddleware() {
 
             res.clearCookie('accessToken');
             req.session.oauthState = crypto.createHash('sha1').update(crypto.randomBytes(4098)).digest('hex');
-            var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
-                response_type: 'code',
-                client_id: self.clientId,
-                state: req.session.oauthState
+            req.session.save(function () {
+                var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
+                    response_type: 'code',
+                    client_id: self.clientId,
+                    state: req.session.oauthState
+                });
+                res.redirect(url);
             });
-            res.redirect(url);
         });
 
         this.app.get('/auth/andbang/callback', function (req, response) {
             var result = querystring.parse(req.url.split('?')[1]);
 
             if (result.error) {
-                response.redirect('/auth/andbang/failed');
+                return response.redirect('/auth/andbang/failed');
             }
 
             if (result.state != req.session.oauthState) {
-                response.redirect('/auth/andbang/failed');
+                return response.redirect('/auth/andbang/failed');
             }
 
             request.post({
