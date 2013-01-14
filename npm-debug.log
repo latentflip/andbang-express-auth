@@ -1,0 +1,92 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/henrik/.nvm/v0.8.11/bin/node',
+1 verbose cli   '/Users/henrik/.nvm/v0.8.11/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@1.1.62
+3 info using node@v0.8.11
+4 verbose publish [ '.' ]
+5 verbose read json /Users/henrik/Sites/andbang-express-auth/package.json
+6 verbose cache add [ '.', null ]
+7 silly cache add name=undefined spec="." args=[".",null]
+8 verbose parsed url { pathname: '.', path: '.', href: '.' }
+9 silly lockFile 3a52ce78- .
+10 verbose lock . /Users/henrik/.npm/3a52ce78-.lock
+11 verbose read json package.json
+12 verbose tar pack [ '/var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/tmp.tgz',
+12 verbose tar pack   '.' ]
+13 verbose tarball /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/tmp.tgz
+14 verbose folder .
+15 info prepublish andbang-express-auth@0.0.5
+16 silly lockFile c3085d69-7395-0-33974119601771235-tmp-tgz /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/tmp.tgz
+17 verbose lock /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/tmp.tgz /Users/henrik/.npm/c3085d69-7395-0-33974119601771235-tmp-tgz.lock
+18 silly lockFile c3085d69-7395-0-33974119601771235-tmp-tgz /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/tmp.tgz
+19 verbose tar unpack /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/tmp.tgz
+20 silly lockFile 59bc9a47-7395-0-33974119601771235-package /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/package
+21 verbose lock /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/package /Users/henrik/.npm/59bc9a47-7395-0-33974119601771235-package.lock
+22 silly gunzTarPerm modes [ '755', '644' ]
+23 silly gunzTarPerm extractEntry package.json
+24 silly gunzTarPerm extractEntry README.md
+25 silly gunzTarPerm extractEntry index.js
+26 silly gunzTarPerm extractEntry server.js
+27 verbose read json /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/package/package.json
+28 silly lockFile 59bc9a47-7395-0-33974119601771235-package /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/package
+29 verbose from cache /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/package/package.json
+30 verbose tar pack [ '/Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz',
+30 verbose tar pack   '/var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/package' ]
+31 verbose tarball /Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz
+32 verbose folder /var/folders/5x/jcdy8f650lq_4bn1lzknfm7r0000gn/T/npm-1829/1358206977395-0.33974119601771235/package
+33 silly lockFile 91fa0700-g-express-auth-0-0-5-package-tgz /Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz
+34 verbose lock /Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz /Users/henrik/.npm/91fa0700-g-express-auth-0-0-5-package-tgz.lock
+35 silly lockFile 91fa0700-g-express-auth-0-0-5-package-tgz /Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz
+36 silly lockFile 0546c7a7-dbang-express-auth-0-0-5-package /Users/henrik/.npm/andbang-express-auth/0.0.5/package
+37 verbose lock /Users/henrik/.npm/andbang-express-auth/0.0.5/package /Users/henrik/.npm/0546c7a7-dbang-express-auth-0-0-5-package.lock
+38 silly lockFile 0546c7a7-dbang-express-auth-0-0-5-package /Users/henrik/.npm/andbang-express-auth/0.0.5/package
+39 verbose tar unpack /Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz
+40 silly lockFile 0546c7a7-dbang-express-auth-0-0-5-package /Users/henrik/.npm/andbang-express-auth/0.0.5/package
+41 verbose lock /Users/henrik/.npm/andbang-express-auth/0.0.5/package /Users/henrik/.npm/0546c7a7-dbang-express-auth-0-0-5-package.lock
+42 silly gunzTarPerm modes [ '755', '644' ]
+43 silly gunzTarPerm extractEntry package.json
+44 silly gunzTarPerm extractEntry README.md
+45 silly gunzTarPerm extractEntry index.js
+46 silly gunzTarPerm extractEntry server.js
+47 verbose read json /Users/henrik/.npm/andbang-express-auth/0.0.5/package/package.json
+48 silly lockFile 0546c7a7-dbang-express-auth-0-0-5-package /Users/henrik/.npm/andbang-express-auth/0.0.5/package
+49 silly shasum updated bytes 2849
+50 info shasum 93cacafd1288ad2295a8b4808cb2f0e30da54950
+50 info shasum /Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz
+51 verbose from cache /Users/henrik/.npm/andbang-express-auth/0.0.5/package/package.json
+52 verbose chmod /Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz 644
+53 verbose chown /Users/henrik/.npm/andbang-express-auth/0.0.5/package.tgz [ 501, 20 ]
+54 silly lockFile 3a52ce78- .
+55 silly publish { name: 'andbang-express-auth',
+55 silly publish   description: 'Dead simple And Bang auth middleware.',
+55 silly publish   version: '0.0.5',
+55 silly publish   dependencies: { express: '3.x', colors: '', request: '', crypto: '' },
+55 silly publish   main: 'index.js',
+55 silly publish   scripts: { start: 'node server.js' },
+55 silly publish   readme: '# And Bang auth middleware for Express.js\n\nWorld\'s simplest OAuth. \n\n1. Sign up for an And Bang account at https://next.andbang.com\n2. Register your application at https://accounts.andbang.com/developer\n\n   When setting your redirect URL, make sure your path is `/auth/andbang/callback`.\n   For example: `localhost:9000/auth/andbang/callback`\n\n3. Copy your app\'s client ID and secret, and insert them into the middleware\'s\n   constructor, like in the example below.\n4. Add a link or button that points to `/auth` somewhere on your page.\n5. ...\n6. Profit!\n   \nThe code below should work once you\'ve dropped in your client ID and secret:\n\n```js\nvar express = require(\'express\'),\n    andbangAuth = require(\'andbang-express-auth\'),\n    app = express();\n\n// config our middleware\napp.use(express.cookieParser());\napp.use(express.session({ secret: \'keyboard cat\' }));\napp.use(andbangAuth.middleware({\n    app: app,\n    clientId: \'<< YOUR CLIENT ID>>\',\n    clientSecret: \'<< YOUR CLIENT SECRET>>\',\n    defaultRedirect: \'/secured\'\n}));\n\n// Just re-direct people to \'/auth\' and the plugin does the rest.\napp.get(\'/\', function (req, res) {\n    res.send(\'<a href="/auth">login</a>\');\n});\n\n// For routes where you want to require login,\n// add the middleware like this:\napp.get(\'/secured\', andbangAuth.secure(), function (req, res) {\n    res.send(req.session.user);\n});\n\n```\n\n# License\nMIT\n',
+55 silly publish   _id: 'andbang-express-auth@0.0.5',
+55 silly publish   dist: { shasum: '93cacafd1288ad2295a8b4808cb2f0e30da54950' } }
+56 verbose url raw andbang-express-auth
+57 verbose url resolving [ 'https://registry.npmjs.org/', './andbang-express-auth' ]
+58 verbose url resolved https://registry.npmjs.org/andbang-express-auth
+59 info trying registry request attempt 1 at 15:42:57
+60 http PUT https://registry.npmjs.org/andbang-express-auth
+61 http 409 https://registry.npmjs.org/andbang-express-auth
+62 verbose url raw andbang-express-auth
+63 verbose url resolving [ 'https://registry.npmjs.org/', './andbang-express-auth' ]
+64 verbose url resolved https://registry.npmjs.org/andbang-express-auth
+65 info trying registry request attempt 1 at 15:42:58
+66 http GET https://registry.npmjs.org/andbang-express-auth
+67 http 200 https://registry.npmjs.org/andbang-express-auth
+68 error publish fail Cannot publish over existing version.
+68 error publish fail Bump the 'version' field, set the --force flag, or
+68 error publish fail     npm unpublish 'andbang-express-auth@0.0.5'
+68 error publish fail and try again
+69 error System Darwin 12.2.1
+70 error command "/Users/henrik/.nvm/v0.8.11/bin/node" "/Users/henrik/.nvm/v0.8.11/bin/npm" "publish"
+71 error cwd /Users/henrik/Sites/andbang-express-auth
+72 error node -v v0.8.11
+73 error npm -v 1.1.62
+74 error code EPUBLISHCONFLICT
+75 verbose exit [ 1, true ]
