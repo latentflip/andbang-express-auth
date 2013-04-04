@@ -58,7 +58,6 @@ function AndBangMiddleware() {
         // set our account and API urls
         this.accountsUrl = config.local ? 'http://localhost:3001' : 'https://accounts.andbang.com';
         this.apiUrl = config.local ? 'http://localhost:3000' : 'https://api.andbang.com';
-        this.secureCookies = !config.local;
 
         // The login route. If we already have a token in the session we'll
         // just continue through.
@@ -108,7 +107,7 @@ function AndBangMiddleware() {
                     req.session.save(function () {
                         response.cookie('accessToken', token.access_token, {
                             maxAge: 86400000,
-                            secure: self.secureCookies
+                            secure: req.secure || req.host != 'localhost'
                         });
                         return self.userRequired(req, response, function () {
                             response.redirect(nextUrl);
@@ -179,7 +178,7 @@ function AndBangMiddleware() {
             } else if (!cookieToken && sessionToken) {
                 res.cookie('accessToken', sessionToken, {
                     maxAge: 86400000,
-                    secure: self.secureCookies
+                    secure: req.secure || req.host != 'localhost'
                 });
                 return self.userRequired(req, res, next);
             } else if (cookieToken && !sessionToken) {
@@ -206,7 +205,7 @@ function AndBangMiddleware() {
             } else if (cookieToken && sessionToken && cookieToken !== sessionToken) {
                 res.cookie('accessToken', sessionToken, {
                     maxAge: 86400000,
-                    secure: self.secureCookies
+                    secure: req.secure || req.host != 'localhost'
                 });
                 return self.userRequired(req, res, next);
             } else {
