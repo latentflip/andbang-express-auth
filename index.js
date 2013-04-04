@@ -111,9 +111,9 @@ function AndBangMiddleware() {
                             secure: req.secure || req.host != 'localhost'
                         });
                         return self.userRequired(req, response, function () {
-                            self.onRefreshToken(req.session.user, req.session.token.refresh_token), function () {
-                                response.redirect(nextUrl)
-                            }
+                            self.onRefreshToken(req.session.user, req.session.token.refresh_token, function () {
+                                response.redirect(nextUrl);
+                            });
                         });
                     });
                 } else {
