@@ -91,6 +91,7 @@ function AndBangMiddleware() {
 
             request.post({
                 url: self.accountsUrl + '/oauth/access_token', 
+                strictSSL: true,
                 form: {
                     code: result.code,
                     grant_type: 'authorization_code',
@@ -144,6 +145,7 @@ function AndBangMiddleware() {
         } else {
             request.get({
                 url: self.apiUrl + '/me',
+                strictSSL: true,
                 headers: {
                     authorization: 'Bearer ' + req.session.token.access_token
                 },
@@ -183,6 +185,7 @@ function AndBangMiddleware() {
             } else if (cookieToken && !sessionToken) {
                 request.post({
                     url: self.accountsUrl + '/oauth/validate',
+                    strictSSL: true,
                     form: {
                         access_token: cookieToken,
                         client_id: self.clientId,
