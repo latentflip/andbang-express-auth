@@ -56,6 +56,7 @@ function AndBangMiddleware() {
         // set our account and API urls
         this.accountsUrl = config.local ? 'http://localhost:3001' : 'https://accounts.andbang.com';
         this.apiUrl = config.local ? 'http://localhost:3000' : 'https://api.andbang.com';
+        this.onRefreshToken = config.onRefreshToken || function (user, token, cb) { cb(); };
 
         // The login route. If we already have a token in the session we'll
         // just continue through.
@@ -89,6 +90,7 @@ function AndBangMiddleware() {
 
             request.post({
                 url: self.accountsUrl + '/oauth/access_token', 
+                strictSSL: true,
                 form: {
                     code: result.code,
                     grant_type: 'authorization_code',
@@ -107,7 +109,9 @@ function AndBangMiddleware() {
                             secure: req.secure || req.host != 'localhost'
                         });
                         return self.userRequired(req, response, function () {
-                            response.redirect(nextUrl);
+                            self.onRefreshToken(req.session.user, req.session.token.refresh_token, function () {
+                                response.redirect(nextUrl);
+                            });
                         });
                     });
                 } else {
@@ -140,6 +144,7 @@ function AndBangMiddleware() {
         } else {
             request.get({
                 url: self.apiUrl + '/me',
+                strictSSL: true,
                 headers: {
                     authorization: 'Bearer ' + req.token.access_token
                 },
@@ -168,6 +173,7 @@ function AndBangMiddleware() {
             } else {
                 request.post({
                     url: self.accountsUrl + '/oauth/validate',
+                    strictSSL: true,
                     form: {
                         access_token: cookieToken,
                         client_id: self.clientId,
