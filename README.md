@@ -2,7 +2,7 @@
 
 World's simplest OAuth. 
 
-1. Sign up for an And Bang account at https://next.andbang.com
+1. Sign up for an And Bang account at https://andbang.com
 2. Register your application at https://accounts.andbang.com/developer
 
    When setting your redirect URL, make sure your path is `/auth/andbang/callback`.
