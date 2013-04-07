@@ -109,7 +109,7 @@ function AndBangMiddleware() {
                             secure: req.secure || req.host != 'localhost'
                         });
                         return self.userRequired(req, response, function () {
-                            self.onRefreshToken(req.session.user, req.session.token.refresh_token, function () {
+                            self.onRefreshToken(req.session.user, req.token.refresh_token, function () {
                                 response.redirect(nextUrl);
                             });
                         });
