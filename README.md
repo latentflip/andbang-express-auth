@@ -10,7 +10,7 @@ World's simplest OAuth.
 
 3. Copy your app's client ID and secret, and insert them into the middleware's
    constructor, like in the example below.
-4. Add a link or button that points to `/auth` somewhere on your page.
+4. Add a link or button that points to `/auth` somewhere on your page. You can also optionally set the "next" url to go to after successful auth all in one swoop by doing `/auth?next={{some URL}}`.
 5. ...
 6. Profit!
    
