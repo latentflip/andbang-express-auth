@@ -47,7 +47,7 @@ function AndBangMiddleware() {
         if (!config.app || !config.clientId || !config.clientSecret || !config.defaultRedirect) {
             this.showHelp('You have to pass the app, clientId and clientSecret and a default redirect. For example:');
         }
-        
+
         // store our configs as properties
         _.extend(this, {
             loggedOutRedirect: '/'
@@ -67,6 +67,11 @@ function AndBangMiddleware() {
 
             res.clearCookie('accessToken');
             req.session.oauthState = crypto.createHash('sha1').update(crypto.randomBytes(4098)).digest('hex');
+            // if you pass a next as query string, store it in session
+            // so we can know where to come back to.
+            if (req.query && req.query.next) {
+                req.session.nextUrl = req.query.next;
+            }
             req.session.save(function () {
                 var url = self.accountsUrl + '/oauth/authorize?' + querystring.stringify({
                     response_type: 'code',
@@ -89,7 +94,7 @@ function AndBangMiddleware() {
             }
 
             request.post({
-                url: self.accountsUrl + '/oauth/access_token', 
+                url: self.accountsUrl + '/oauth/access_token',
                 strictSSL: true,
                 form: {
                     code: result.code,
@@ -166,7 +171,7 @@ function AndBangMiddleware() {
         // ensure that they were issued for our app and aren't expired.
         return function (req, res, next) {
             var cookieToken = req.cookies.accessToken;
-           
+
             if (!cookieToken) {
                 req.session.nextUrl = req.url;
                 return res.redirect('/auth');
