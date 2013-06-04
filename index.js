@@ -54,8 +54,8 @@ function AndBangMiddleware() {
         }, config);
 
         // set our account and API urls
-        this.accountsUrl = config.local ? 'http://localhost:3001' : 'https://accounts.andbang.com';
-        this.apiUrl = config.local ? 'http://localhost:3000' : 'https://api.andbang.com';
+        this.accountsUrl = config.accountsUrl || (config.local ? 'http://localhost:3001' : 'https://accounts.andbang.com');
+        this.apiUrl = config.apiUrl || (config.local ? 'http://localhost:3000' : 'https://api.andbang.com');
         this.onRefreshToken = config.onRefreshToken || function (user, token, cb) { cb(); };
 
         // The login route. If we already have a token in the session we'll
@@ -163,7 +163,7 @@ function AndBangMiddleware() {
                 }
             });
         }
-    }
+    };
 
     this.secure = function () {
         // Check that an access token is available, either in the current
@@ -183,7 +183,7 @@ function AndBangMiddleware() {
                         access_token: cookieToken,
                         client_id: self.clientId,
                         client_secret: self.clientSecret
-                    },
+                    }
                 }, function (err, res2, body) {
                     if (res2 && res2.statusCode === 200) {
                         req.token = JSON.parse(body);
@@ -198,7 +198,7 @@ function AndBangMiddleware() {
                     res.redirect('/auth/andbang/failed');
                 });
             }
-        }
+        };
     };
 }
 
