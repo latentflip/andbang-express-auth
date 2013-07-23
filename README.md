@@ -42,6 +42,10 @@ app.get('/secured', andbangAuth.secure(), function (req, res) {
     res.send(req.session.user);
 });
 
+// This port should match the port you set in the andbang redirect URL
+// (eg 9000 as in the example above)
+app.listen(9000);
+
 ```
 
 # License
